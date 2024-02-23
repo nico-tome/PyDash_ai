@@ -14,8 +14,8 @@ pygame.init()
 window_size = (1600, 900)
 screen = pygame.display.set_mode(window_size)
 
-lvl = pygame.image.load('PyDash/PyDash/level_2.png')
-pygame.mixer.music.load('PyDash/PyDash/BaseAfterBase.mp3')
+lvl = pygame.image.load('PyDash/level_2.png')
+pygame.mixer.music.load('PyDash/explode.mp3')
 
 pygame.display.set_caption('Test')
 mixer.music.set_volume(0.05)
@@ -107,11 +107,11 @@ slow_time = False
 draw_debugg = True
 
 def get_generation():
-    df = pd.read_csv('PyDash/PyDash/best.csv', sep=";")
+    df = pd.read_csv('PyDash/best.csv', sep=";")
     return(len(df['generation']))
 
 def save_in_best(best_brain):
-    df = pd.read_csv('PyDash/PyDash/best.csv', sep=";")
+    df = pd.read_csv('PyDash/best.csv', sep=";")
     
     data = {'generation': [], 'brain': []}
     data['generation'] = list(df['generation'])
@@ -121,7 +121,7 @@ def save_in_best(best_brain):
     data['generation'].append(len(data['brain']) - 1)
     
     new_df = pd.DataFrame(data)
-    new_df.to_csv('PyDash/PyDash/best.csv', index=False, sep=";")
+    new_df.to_csv('PyDash/best.csv', index=False, sep=";")
 
 def creat_brain(iteration):
     all_brains = []
@@ -151,11 +151,11 @@ def save_brain(data):
     all_data['brain'] = all_agents
 
     df = pd.DataFrame(all_data)
-    df.to_csv('PyDash/PyDash/agents.csv', index=False, sep=";")
+    df.to_csv('PyDash/agents.csv', index=False, sep=";")
 
 def load_brain(id):
     
-    df = pd.read_csv('PyDash/PyDash/agents.csv', sep=';')
+    df = pd.read_csv('PyDash/agents.csv', sep=';')
     row = df[df['id'] == id]
     if len(row) > 0:
         brain_list = eval(row['brain'].iloc[0])
