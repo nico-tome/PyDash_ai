@@ -339,7 +339,7 @@ id = 0
 
 save_in_best(load_brain(by_id))
 #use a while loop to  repeat the game until the window is closed
-while True:
+while True: 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -381,7 +381,7 @@ while True:
     if keys[pygame.K_f]: #hide debugg
         draw_debugg = False
 
-    if keys[pygame.K_p]:
+    if keys[pygame.K_p]: #break
         game_paused = game_paused == False
         time.sleep(0.3)
 
