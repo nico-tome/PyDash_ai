@@ -48,5 +48,25 @@ Finally we start the process again.
 > - 5: prensence of a not grey pixel (not a spike)
 > - 6: presence of a a grey or a black pixel (a block or a spike)
 
+# Files
+
+- PYDASH_AI
+    - PyDash
+        - asset
+            - BaseAfterBase.mp3 #music of the game
+            - explode.mp3 #sound of the death
+            - level_1.png #the first level(png is used to creat level)
+            - level_2.png
+        
+        - data
+            - agents.csv #all the brains from the current generation
+            - best.csv #keep  track of the evolution
+            - settings.csv #settings like the mod, the window resolution
+
+        - clean_best.py #delet best generation withe the same brain
+        - menu.py #select your settings and launch the project
+        - PyDash.py #the game
+    
+    - #files for the presentation
 ---
-*last update: 24/02/2024*
+*last update: 01/03/2024*

@@ -14,8 +14,8 @@ pygame.init()
 window_size = (1600, 900)
 screen = pygame.display.set_mode(window_size)
 
-lvl = pygame.image.load('PyDash/level_2.png')
-pygame.mixer.music.load('PyDash/explode.mp3')
+lvl = pygame.image.load('PyDash/asset/level_2.png')
+pygame.mixer.music.load('PyDash/asset/explode.mp3')
 
 pygame.display.set_caption('Test')
 mixer.music.set_volume(0.05)
@@ -106,12 +106,16 @@ draw_neurone = True
 slow_time = False
 draw_debugg = True
 
-def get_generation():
-    df = pd.read_csv('PyDash/best.csv', sep=";")
+def get_mod():
+    df = pd.read_csv('PyDash/data/settings.csv')
+    return df['settings'][0]
+
+def get_generation(filepath):
+    df = pd.read_csv(filepath, sep=";")
     return(len(df['generation']))
 
-def save_in_best(best_brain):
-    df = pd.read_csv('PyDash/best.csv', sep=";")
+def save_in_best(best_brain, filepath):
+    df = pd.read_csv(filepath, sep=";")
     
     data = {'generation': [], 'brain': []}
     data['generation'] = list(df['generation'])
@@ -121,7 +125,7 @@ def save_in_best(best_brain):
     data['generation'].append(len(data['brain']) - 1)
     
     new_df = pd.DataFrame(data)
-    new_df.to_csv('PyDash/best.csv', index=False, sep=";")
+    new_df.to_csv(filepath, index=False, sep=";")
 
 def creat_brain(iteration):
     all_brains = []
@@ -136,7 +140,7 @@ def creat_brain(iteration):
     
     return all_brains
 
-def save_brain(data):
+def save_brain(data, filepath):
     all_data = {}
     all_agents = []
     all_id = []
@@ -151,15 +155,27 @@ def save_brain(data):
     all_data['brain'] = all_agents
 
     df = pd.DataFrame(all_data)
-    df.to_csv('PyDash/agents.csv', index=False, sep=";")
+    df.to_csv(filepath, index=False, sep=";")
 
-def load_brain(id):
+def load_brain(id, filepath):
     
-    df = pd.read_csv('PyDash/agents.csv', sep=';')
+    df = pd.read_csv(filepath, sep=';')
     row = df[df['id'] == id]
     if len(row) > 0:
         brain_list = eval(row['brain'].iloc[0])
         return brain_list
+    else:
+        print(id)
+        print("L'ID spécifié n'existe pas dans le fichier CSV.")
+        return None
+
+def load_next_best(id):
+    df = pd.read_csv('PyDash/data/best.csv', sep=';')
+    generation = df['generation'][id]
+    row = df[df['generation'] == id]
+    if len(row) > 0:
+        brain_list = eval(row['brain'].iloc[0])
+        return brain_list, generation
     else:
         print(id)
         print("L'ID spécifié n'existe pas dans le fichier CSV.")
@@ -220,22 +236,27 @@ def reset_player():
     screen_y = 0
     gravity = 1
     block_ofs = 0
-    if score > best_score:
-        best_score = score
-        by_id = id
-    score = 0
-    if id == 49:
-        #print(by_id)
-        save_in_best(load_brain(by_id))
-        save_brain(generate_new_agents(load_brain(by_id)))
-        generation += 1
-        id = 0
-        best_score = 0
-        brain = load_brain(id)
-        brain_state = creat_brain_state()
+    if mod == 'train':
+        if score > best_score:
+            best_score = score
+            by_id = id
+        score = 0
+        if id == 49:
+            #print(by_id)
+            save_in_best(load_brain(by_id, filepath_))
+            save_brain(generate_new_agents(load_brain(by_id, filepath_)))
+            generation += 1
+            id = 0
+            best_score = 0
+            brain = load_brain(id, filepath_)
+            brain_state = creat_brain_state()
+        else:
+            id += 1
+            brain = load_brain(id, filepath_)
+            brain_state = creat_brain_state()
     else:
         id += 1
-        brain = load_brain(id)
+        brain, generation = load_next_best(id)
         brain_state = creat_brain_state()
 
 
@@ -329,15 +350,23 @@ def draw_brain():
 
 ''''''
 
+mod = get_mod()
+filepath_ = 'PyDash/data/agents.csv' if mod == 'train' else 'PyDash/data/best.csv'
+print(filepath_)
+
 #brain variable
-generation = get_generation()
 score = 0
 by_id = 0
-brain = load_brain(0)
+if mod == 'train':
+    generation = get_generation('PyDash/data/best.csv')
+    brain = load_brain(0, filepath_)
+else:
+    generation = 0
+    brain, generation = load_next_best(0)
+    print(brain)
+
 brain_state = creat_brain_state()
 id = 0
-
-save_in_best(load_brain(by_id))
 #use a while loop to  repeat the game until the window is closed
 while True: 
     for event in pygame.event.get():
@@ -581,11 +610,17 @@ while True:
         score += 1
 
 
-    if draw_debugg: 
+    if draw_debugg:
         font = pygame.font.Font(None, 36)
-        text = font.render(f"score: {score} | id: {id} | best score: {best_score} by {by_id} | génération: {generation}", True, WHITE)
-        text_rect = text.get_rect()
-        text_rect.center = (600, screen.get_height() - 30)
+        if mod == 'train': 
+            text = font.render(f"score: {score} | id: {id} | best score: {best_score} by {by_id} | génération: {generation}", True, WHITE)
+            text_rect = text.get_rect()
+            text_rect.center = (600, screen.get_height() - 30)
+        else:
+            text = font.render(f"Generation: {generation}", True, WHITE)
+            text_rect = text.get_rect()
+            text_rect.center = (150, screen.get_height() - 30)
+
         log_text = [
             "DEBUGG:",
             f"Gravity: {gravity}",
@@ -602,6 +637,11 @@ while True:
             screen.blit(text_surface,(50, y_pos))
             y_pos += 30
         screen.blit(text, text_rect)
+
+        mod_text = font.render(f"Mod: {mod}", True, WHITE)
+        mod_text_rect = mod_text.get_rect()
+        mod_text_rect.center = (10, 20)
+        screen.blit(mod_text, mod_text_rect)
     
     if slow_time:
         time.sleep(0.0071)
