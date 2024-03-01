@@ -1,63 +1,55 @@
 import tkinter as tk
-from tkinter import*
 from tkinter import ttk
 import subprocess
 import pandas as pd
-    
-def Creation() :
-    
-    global fenetre,mod_var, height_var, width_var   # variables globales 
-    fenetre = Tk()   #creation d une fenetre
-    fenetre.geometry("600x200")   # dimensions
+
+def update_volume_text(value):
+    volume_text_var.set(f"Volume: {volume_var.get()}")
+
+def Creation():
+    global fenetre, mod_var, volume_var, volume_text_var, volume_label  # variables globales
+    fenetre = tk.Tk()  # creation d une fenetre
+    fenetre.geometry("250x300")  # dimensions
     fenetre.title('PyDash Ai')
 
     mod_var = tk.StringVar(value='train')
-    height_var = tk.StringVar(value='600')
-    width_var = tk.StringVar(value='400')
-    
-    
+    volume_var = tk.IntVar(value=50)
+    volume_text_var = tk.StringVar(value=f'Volume: {volume_var.get()}')
+
     page_title = tk.Label(text="PyDash AI")
     page_title.pack()
-    
+
     main_Frame = tk.Frame(master=fenetre)
 
     selector_frame = tk.Frame(master=main_Frame)
     mode_selector = ttk.Combobox(master=selector_frame, values=['train', 'best'], textvariable=mod_var)
     mode_label = tk.Label(master=selector_frame, text='Select Mod')
-    start_button = tk.Button(master=selector_frame, text='Start', command=start)
     mode_label.pack(anchor='w')
     mode_selector.pack()
 
-    dimension_frame = tk.Frame(master=main_Frame)
-    height = ttk.Spinbox(master=dimension_frame, from_=400, to=fenetre.winfo_screenheight(), increment=100, textvariable=height_var)
-    width = ttk.Spinbox(master=dimension_frame, from_=600, to=fenetre.winfo_screenwidth(), increment=100, textvariable=width_var)
-    height_text = tk.Label(master=dimension_frame, text='Window Height:')
-    width_text = tk.Label(master=dimension_frame, text='Window Width:')
-    height_text.pack(anchor='w')
-    height.pack()
-    width_text.pack(anchor='w')
-    width.pack()
-
-    start_button.pack(side='right')
+    volume_frame = tk.Frame(master=main_Frame)
+    volume_label = tk.Label(master=volume_frame, textvariable=volume_text_var)
+    slider = ttk.Scale(master=volume_frame, from_=0, to=100, orient="horizontal", variable=volume_var, command=update_volume_text)
+    volume_label.pack(anchor='w')
+    slider.pack(pady=20)
 
     selector_frame.pack(pady=20)
-    dimension_frame.pack(padx= 20, pady=10)
+    volume_frame.pack(padx=20, pady=10)
 
     main_Frame.pack(anchor='w', padx=20)
 
+    start_button = tk.Button(master=main_Frame, text='Start', command=start)
+    start_button.pack(side='right')
 
-    fenetre.mainloop()      # maintien de la fenetre ouverte
+    fenetre.mainloop()  # maintien de la fenetre ouverte
 
 def start():
-    settings = [mod_var.get(), height_var.get(), width_var.get()]
+    settings = [mod_var.get(), volume_var.get()]
     settings_id = [_ for _ in range(len(settings))]
     settings_data = {'id': settings_id, 'settings': settings}
     df = pd.DataFrame(settings_data)
     df.to_csv('PyDash/data/settings.csv', index=False)
     subprocess.call(['python', 'PyDash/PyDash.py'])
 
-
 # lancement de la création de la fenêtre
-
 Creation()
-    

@@ -7,6 +7,11 @@ import pandas as pd
 import pygame, time, random, copy
 from pygame import mixer
 
+
+def get_settings(id):
+    df = pd.read_csv('PyDash/data/settings.csv')
+    return df['settings'][id]
+
 #initialize pygame
 pygame.init()
 
@@ -18,7 +23,7 @@ lvl = pygame.image.load('PyDash/asset/level_2.png')
 pygame.mixer.music.load('PyDash/asset/explode.mp3')
 
 pygame.display.set_caption('Test')
-mixer.music.set_volume(0.05)
+mixer.music.set_volume(float(get_settings(1)))
 pygame.mixer.music.play()
 
 #color
@@ -105,10 +110,6 @@ draw_sensore = True
 draw_neurone = True
 slow_time = False
 draw_debugg = True
-
-def get_mod():
-    df = pd.read_csv('PyDash/data/settings.csv')
-    return df['settings'][0]
 
 def get_generation(filepath):
     df = pd.read_csv(filepath, sep=";")
@@ -350,7 +351,7 @@ def draw_brain():
 
 ''''''
 
-mod = get_mod()
+mod = get_settings(0)
 filepath_ = 'PyDash/data/agents.csv' if mod == 'train' else 'PyDash/data/best.csv'
 print(filepath_)
 
@@ -632,15 +633,16 @@ while True:
             f"Screen_y: {screen_y}",
         ]
         y_pos = 50
+        x_pos = 50
         for line in log_text:
             text_surface = font.render(line, True, WHITE)
-            screen.blit(text_surface,(50, y_pos))
+            screen.blit(text_surface,(x_pos, y_pos))
             y_pos += 30
         screen.blit(text, text_rect)
 
         mod_text = font.render(f"Mod: {mod}", True, WHITE)
         mod_text_rect = mod_text.get_rect()
-        mod_text_rect.center = (10, 20)
+        mod_text_rect.center = (screen.get_width() - 100, 40)
         screen.blit(mod_text, mod_text_rect)
     
     if slow_time:

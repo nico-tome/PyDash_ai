@@ -61,7 +61,7 @@ Finally we start the process again.
         - data
             - agents.csv #all the brains from the current generation
             - best.csv #keep  track of the evolution
-            - settings.csv #settings like the mod, the window resolution
+            - settings.csv #settings like the mod, volume
 
         - clean_best.py #delet best generation withe the same brain
         - menu.py #select your settings and launch the project
