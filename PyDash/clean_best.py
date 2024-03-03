@@ -1,3 +1,7 @@
+'''
+clean the best.csv file by deleting duplicata
+'''
+
 import pandas as pd
 
 all_data = {}
@@ -9,7 +13,7 @@ count  = 0
 df = pd.read_csv('PyDash/data/best.csv', sep=";")
 for i in df['brain']:
     print(i)
-    if i == cach:
+    if i == cach and count != len(df['brain']):
         pass
     else:
         brain.append(i)

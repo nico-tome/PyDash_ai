@@ -113,7 +113,7 @@ draw_debugg = True
 
 def get_generation(filepath):
     df = pd.read_csv(filepath, sep=";")
-    return(len(df['generation']))
+    return(df['id'].iloc[-1])
 
 def save_in_best(best_brain, filepath):
     df = pd.read_csv(filepath, sep=";")
@@ -172,15 +172,15 @@ def load_brain(id, filepath):
 
 def load_next_best(id):
     df = pd.read_csv('PyDash/data/best.csv', sep=';')
-    generation = df['generation'][id]
-    row = df[df['generation'] == id]
-    if len(row) > 0:
-        brain_list = eval(row['brain'].iloc[0])
-        return brain_list, generation
-    else:
-        print(id)
-        print("L'ID spécifié n'existe pas dans le fichier CSV.")
-        return None
+    while True:
+        generation = df['id'].iloc[id]
+        row = df[df['id'] == id]
+        if len(row) > 0:
+            brain_list = eval(row['brain'].iloc[0])
+            return brain_list, generation
+        else:
+            id += 1
+            print(id)
 
 def creat_brain_state():
     empty_brain = [[] for _ in range(len(brain))]
@@ -257,6 +257,7 @@ def reset_player():
             brain_state = creat_brain_state()
     else:
         id += 1
+        print('neurone', id)
         brain, generation = load_next_best(id)
         brain_state = creat_brain_state()
 
@@ -359,7 +360,7 @@ print(filepath_)
 score = 0
 by_id = 0
 if mod == 'train':
-    generation = get_generation('PyDash/data/best.csv')
+    generation = get_generation('PyDash/data/best.csv') + 1
     brain = load_brain(0, filepath_)
 else:
     generation = 0
