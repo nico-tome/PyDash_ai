@@ -9,7 +9,7 @@ from pygame import mixer
 
 
 def get_settings(id):
-    df = pd.read_csv('PyDash/data/settings.csv')
+    df = pd.read_csv('PyDash_ai/PyDash/data/settings.csv')
     return df['settings'][id]
 
 #initialize pygame
@@ -19,8 +19,8 @@ pygame.init()
 window_size = (1600, 900)
 screen = pygame.display.set_mode(window_size)
 
-lvl = pygame.image.load('PyDash/asset/level_2.png')
-pygame.mixer.music.load('PyDash/asset/explode.mp3')
+lvl = pygame.image.load('PyDash_ai/PyDash/asset/level_2.png')
+pygame.mixer.music.load('PyDash_ai/PyDash/asset/explode.mp3')
 
 pygame.display.set_caption('Test')
 mixer.music.set_volume(float(get_settings(1)))
@@ -171,7 +171,7 @@ def load_brain(id, filepath):
         return None
 
 def load_next_best(id):
-    df = pd.read_csv('PyDash/data/best.csv', sep=';')
+    df = pd.read_csv('PyDash_ai/PyDash/data/best.csv', sep=';')
     while True:
         generation = df['id'].iloc[id]
         row = df[df['id'] == id]
@@ -353,14 +353,14 @@ def draw_brain():
 ''''''
 
 mod = get_settings(0)
-filepath_ = 'PyDash/data/agents.csv' if mod == 'train' else 'PyDash/data/best.csv'
+filepath_ = 'PyDash_ai/PyDash/data/agents.csv' if mod == 'train' else 'PyDash_ai/PyDash/data/best.csv'
 print(filepath_)
 
 #brain variable
 score = 0
 by_id = 0
 if mod == 'train':
-    generation = get_generation('PyDash/data/best.csv') + 1
+    generation = get_generation('PyDash_ai/PyDash/data/best.csv') + 1
     brain = load_brain(0, filepath_)
 else:
     generation = 0
