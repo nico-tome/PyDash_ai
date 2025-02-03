@@ -10,7 +10,7 @@ id = []
 cach = ''
 count  = 0
 
-df = pd.read_csv('PyDash/data/best.csv', sep=";")
+df = pd.read_csv('data/best.csv', sep=";")
 for i in df['brain']:
     print(i)
     if i == cach and count != len(df['brain']):
@@ -25,4 +25,4 @@ all_data['id'] = id
 all_data['brain'] = brain
 
 df = pd.DataFrame(all_data)
-df.to_csv('PyDash/data/best.csv', index=False, sep=";")
+df.to_csv('data/best.csv', index=False, sep=";")
