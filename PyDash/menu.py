@@ -48,8 +48,8 @@ def start():
     settings_id = [_ for _ in range(len(settings))]
     settings_data = {'id': settings_id, 'settings': settings}
     df = pd.DataFrame(settings_data)
-    df.to_csv('PyDash_ai/PyDash/data/settings.csv', index=False)
-    subprocess.call(['python', 'PyDash_ai/PyDash/PyDash.py'])
+    df.to_csv('data/settings.csv', index=False)
+    subprocess.call(['python', 'PyDash.py'])
 
 # lancement de la création de la fenêtre
 Creation()
